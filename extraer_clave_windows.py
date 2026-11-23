@@ -72,11 +72,16 @@ def read_adept_values():
     out = {}
     with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Adobe\Adept\Device") as k:
         dev_key, reg_type = winreg.QueryValueEx(k, "key")
-        if reg_type != winreg.REG_BINARY:
-            raise RuntimeError(f"Unexpected registry type for Device\\key: {reg_type}")
-        decrypted = dpapi_decrypt(dev_key)
-        out["device_key_dpapi_decrypted_len"] = len(decrypted)
-        out["device_key_dpapi_decrypted_hex"] = decrypted.hex()
+        out["device_key_reg_type"] = reg_type
+        out["device_key_raw_len"] = len(dev_key) if isinstance(dev_key, (bytes, bytearray)) else None
+        out["device_key_raw_hex"] = dev_key.hex() if isinstance(dev_key, (bytes, bytearray)) else str(dev_key)
+        try:
+            decrypted = dpapi_decrypt(dev_key)
+            out["device_key_dpapi_decrypted_len"] = len(decrypted)
+            out["device_key_dpapi_decrypted_hex"] = decrypted.hex()
+            out["device_key_dpapi_error"] = None
+        except Exception as exc:
+            out["device_key_dpapi_error"] = str(exc)
 
     base = r"Software\Adobe\Adept\Activation\0001"
     for sub, val_name in [("0001", "value"), ("0002", "value"), ("0003", "value")]:
@@ -92,8 +97,9 @@ def main():
     out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "adept_extracted_raw.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
-    print(f"Saved raw extracted fields to: {out_path}")
-    print("Keys found:", list(data.keys()))
+    print(f"Saved extracted data to: {out_path}")
+    print("DPAPI status:", data.get("device_key_dpapi_error") or f"OK ({data.get('device_key_dpapi_decrypted_len')} bytes)")
+    print("Keys saved:", list(data.keys()))
 
 
 if __name__ == "__main__":
