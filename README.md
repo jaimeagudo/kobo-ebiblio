@@ -19,13 +19,13 @@ En España, los lectores Kobo no traen integración directa con **eBiblio** por 
 * [`setup_kobo.py`](setup_kobo.py) / [`INSTALAR_EN_KOBO.bat`](INSTALAR_EN_KOBO.bat): Instalador automático en el Kobo por USB.
 * [`uninstall_kobo.py`](uninstall_kobo.py) / [`DESINSTALAR_TODO.bat`](DESINSTALAR_TODO.bat) / [`COMO_DESINSTALAR.md`](COMO_DESINSTALAR.md): Desinstalador completo en 1 clic para dejar el Kobo 100% de fábrica.
 
----
+# Si tienes windwows
 
 ## Paso 0: Autorización inicial con Adobe Digital Editions (Solo 1 vez en la vida)
 
 Para que el motor nativo del Kobo (`librmsdk.so`) pueda abrir los préstamos de eBiblio y el mod pueda canjear los tickets `.acsm` por Wi-Fi en tu nombre, es necesario hacer una única vez la autorización oficial de Adobe en el ordenador:
 
-1. **Instala [Adobe Digital Editions (ADE)](https://www.adobe.com/es/solutions/ebook/digital-editions/download.html)** en tu PC con Windows.
+1. **Instala [Adobe Digital Editions (ADE)](https://www.adobe.com/es/solutions/ebook/digital-editions/download.html)** en tu PC con Windows. (imposible en Mac)
 2. **Autoriza tu ordenador en ADE:** Abre Adobe Digital Editions y ve a **Ayuda → Autorizar equipo...** (`Ctrl+Shift+U`). Introduce tu **Adobe ID** (correo y contraseña de Adobe).
 3. **Autoriza el Kobo en ADE:** Conecta tu Kobo por USB al ordenador. En la columna izquierda de ADE aparecerá **`KOBOeReader`**. Haz clic en el icono del **engranaje ⚙️** junto a `KOBOeReader` y selecciona **«Autorizar dispositivo...»**.
    - Esto crea el archivo oficial `.adobe-digital-editions/activation.xml` dentro de tu Kobo con tu identificador de usuario (`adept:user`).
@@ -33,6 +33,12 @@ Para que el motor nativo del Kobo (`librmsdk.so`) pueda abrir los préstamos de 
 > **Nota:** Nuestro instalador (`INSTALAR_EN_KOBO.bat` / `setup_kobo.py`) comprueba automáticamente que tu Kobo tenga `activation.xml` y extrae de forma transparente tu clave de firma (`adobe_signing_key.json`) desde la autorización de Adobe Digital Editions de tu PC para copiarla al Kobo. **Una vez hecho esto la primera vez, no volverás a necesitar abrir Adobe Digital Editions ni conectar el Kobo al PC para pedir libros.**
 
 ---
+# Si tienes Mac necesitas un amigo con Windows (solo una vez)
+1. **Instala [Adobe Digital Editions (ADE)](https://www.adobe.com/es/solutions/ebook/digital-editions/download.html)** en tu PC con Windows 
+# Solo si usas  mac
+2. `extraer_clave_windows.py` en la maquina Windows para generar `adobe_signing_key.json` 
+3. Ya en el mac `python3 setup_kobo_mac.py --kobo-path /Volumes/myKobo` con `adobe_signing_key.json` en la misma carpeta
+
 
 ## Instalación en el Kobo
 
